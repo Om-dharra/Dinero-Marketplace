@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans} from "next/font/google";
 import "./globals.css";
+import { TRPCReactProvider,useTRPC } from "@/trpc/client";
 
  
 const dmSans = DM_Sans({
@@ -24,7 +25,9 @@ export default function RootLayout({
       <body
         className={`${dmSans.className} antialiased`}
       >
-        {children}
+        <TRPCReactProvider>
+          {children}
+        </TRPCReactProvider>
       </body>
     </html>
   );

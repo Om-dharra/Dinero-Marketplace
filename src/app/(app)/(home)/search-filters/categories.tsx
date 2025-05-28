@@ -2,37 +2,30 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CustomCategory } from "../types";
 import { CategoryDropdown } from "./category-dropdown";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ListFilterIcon } from "lucide-react";
 import { CategoriesSidebar } from "./categories-sidebar";
+import { CategoriesGetManyOutput } from "@/modules/categories/server/types";
 
 interface Props {
-  data: { formattedData?: CustomCategory[] } | CustomCategory[];
+  data: CategoriesGetManyOutput;
 }
 
 export const Categories = ({ data }: Props) => {
   // Convert to array if needed
-  const categories = Array.isArray(data)
-    ? data
-    : Array.isArray(data?.formattedData)
-      ? data.formattedData
-      : [];
 
-  if (categories.length === 0) {
-    return <div>No categories found.</div>;
-  }
+  
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const viewAllRef = useRef<HTMLDivElement>(null);
 
-  const [visibleCount, setVisibleCount] = useState(categories.length);
+  const [visibleCount, setVisibleCount] = useState(data.length);
   const [isAnyHovered, setisAnyHovered] = useState(false);
   const [isSidebarOpen, setisSidebarOpen] = useState(false);
   const activeCategory = "all";
-  const activeCategoryindex = categories.findIndex((cat) => cat.slug === activeCategory);
+  const activeCategoryindex = data.findIndex((cat) => cat.slug === activeCategory);
   const isActiveCategoryHidden = activeCategoryindex >= visibleCount && activeCategoryindex !== -1;
 
   useEffect(() => {
@@ -65,18 +58,18 @@ export const Categories = ({ data }: Props) => {
     return () => {
       resizeObserver.disconnect();
     };
-  }, [categories.length]);
+  }, [data.length]);
 
 
 
   return (
     <div className="relative w-full">
-      <CategoriesSidebar open={isSidebarOpen} onOpenChange={setisSidebarOpen} data={{data}}/>
+      <CategoriesSidebar open={isSidebarOpen} onOpenChange={setisSidebarOpen}/>
       <div
       ref={measureRef}
       className="absolute opacity-0 pointer-events-none flex"
       style={{ position: "fixed",top:-9999, left: -9999 }}>
-        {categories.map((category) => (
+        {data.map((category) => (
           <div key={category.id} className="flex flex-col gap-2">
             <CategoryDropdown
               category={category}
@@ -91,7 +84,7 @@ export const Categories = ({ data }: Props) => {
       className="flex flex-nowrap items-center"
       onMouseEnter={() => setisAnyHovered(true)}
       onMouseLeave={() => setisAnyHovered(false)}>
-        {categories.slice(0,visibleCount).map((category) => (
+        {data.slice(0,visibleCount).map((category) => (
           <div key={category.id} className="flex flex-col gap-2">
             <CategoryDropdown
               category={category}

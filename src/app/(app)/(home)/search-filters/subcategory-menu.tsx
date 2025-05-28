@@ -1,8 +1,10 @@
+import { CategoriesGetManyOutput } from "@/modules/categories/server/types";
 import { Category } from "@/payload-types";
 import Link from "next/link";
 
 interface Props {
-  category: Category;
+  category: CategoriesGetManyOutput[1];
+  // Indicates if the subcategory menu is open
   isOpen: boolean;
   position: {
     top: number;
@@ -28,10 +30,10 @@ export const SubcategoryMenu = ({
   return (
     <div
       className="fixed z-100"
-      // style={{
-      //   top: position.top,
-      //   left: position.left,
-      // }}
+      style={{
+        top: position.top,
+        left: position.left,
+      }}
     >
       <div className="h-3 w-60" />
 

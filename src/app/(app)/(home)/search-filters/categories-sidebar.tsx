@@ -1,15 +1,15 @@
 import {Sheet, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
-import { CustomCategory } from "../types";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { useState } from "react";
+import { use, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { set } from "date-fns";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
+import { CategoriesGetManyOutput } from "@/modules/categories/server/types";
 
 interface Props{
   open:boolean;
   onOpenChange: (open: boolean) => void;
-  data: CustomCategory[];
 }
 
 
@@ -18,26 +18,26 @@ interface Props{
 export const CategoriesSidebar = ({
   open,
   onOpenChange,
-  data,
 }:Props) => {
-  
+  const trpc = useTRPC();
+  const { data }=useQuery(trpc.categories.getMany.queryOptions());
   
   const router = useRouter();
-  const [parentCategories, setParentCategories] = useState<CustomCategory[] | null>(null);
-  const [selectedCategpry, setselectedCategpry] = useState<CustomCategory | null>(null);
+  const [parentCategories, setParentCategories] = useState<CategoriesGetManyOutput | null>(null);
+  const [selectedCategpry, setselectedCategpry] = useState<CategoriesGetManyOutput[1] | null>(null);
   const handleOpenChange = (open: boolean) => {
     setselectedCategpry(null);
     setParentCategories(null);
     onOpenChange(open);
   };
   // const categories = data;
-  const currentCategories =
+  let currentCategories =
   parentCategories
-  ?? data?.data?.formattedData    // ← grab the inner array
+  ?? data   // ← grab the inner array
   ?? [];
-  const handleCategoryClick = (category: CustomCategory) => {
+  const handleCategoryClick = (category: CategoriesGetManyOutput[1]) => {
     if (category.subcategories && category.subcategories.length > 0) {
-      setParentCategories(category.subcategories as CustomCategory[]);
+      setParentCategories(category.subcategories as CategoriesGetManyOutput);
       setselectedCategpry(category);
     } else {
       if (parentCategories && selectedCategpry) {
@@ -84,7 +84,7 @@ export const CategoriesSidebar = ({
               Back
             </button>
           )}
-          {currentCategories.map((category: CustomCategory) => (
+          {currentCategories.map((category: CategoriesGetManyOutput[1]) => (
             (
               <button
                 key={category.slug}
