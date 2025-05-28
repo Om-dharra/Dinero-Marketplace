@@ -78,10 +78,14 @@ export const Navbar = () => {
     <div className="hidden lg:flex">
       <Button
        variant="secondary" className='border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-white hover:bg-red-500 transition-colors text-lg'>
-        Log In
+        <Link href="/sign-in">
+          Log In
+        </Link>
       </Button>
       <Button  variant="secondary" className='border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black text-white hover:bg-red-500 hover:text-black transition-colors text-lg'>
-        Start Selling
+        <Link href="/sign-up">
+          Start Selling
+        </Link>
       </Button>
 
     </div>
