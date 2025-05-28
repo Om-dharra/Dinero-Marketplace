@@ -4,7 +4,7 @@ import Link from "next/link";
 interface Props {
   category: Category;
   isOpen: boolean;
-  getDropdownPosition: {
+  position: {
     top: number;
     left: number;
   };
@@ -13,7 +13,7 @@ interface Props {
 export const SubcategoryMenu = ({
   category,
   isOpen,
-  getDropdownPosition,
+  position,
 }: Props) => {
   // Hide menu if not open or no subcategories
   if (
@@ -29,8 +29,8 @@ export const SubcategoryMenu = ({
     <div
       className="fixed z-100"
       // style={{
-      //   top: getDropdownPosition.top,
-      //   left: getDropdownPosition.left,
+      //   top: position.top,
+      //   left: position.left,
       // }}
     >
       <div className="h-3 w-60" />
@@ -43,7 +43,7 @@ export const SubcategoryMenu = ({
           {category.subcategories.map((subcategory: Category) => (
             <Link
               key={subcategory.slug}
-              href="/"
+              href={`/${category.slug}/${subcategory.slug}`}
               className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center underline font-medium"
             >
               {subcategory.name}

@@ -58,7 +58,7 @@ export const Navbar = () => {
   return (
       <nav className="flex items-center justify-between bg-white p-4 shadow-md">
     <Link href="/" className="pl-6 flex items-center">
-    <span className={cn("text-5xl-font-semibold", poppins.className)}>
+    <span className={cn("text-5xl font-semibold", poppins.className)}>
       Dinero
     </span>
     </Link>

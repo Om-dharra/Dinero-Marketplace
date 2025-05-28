@@ -4,6 +4,7 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { set } from "date-fns";
 
 interface Props{
   open:boolean;
@@ -29,8 +30,11 @@ export const CategoriesSidebar = ({
     setParentCategories(null);
     onOpenChange(open);
   };
-  const currentCategories=parentCategories ?? data ?? [];
-  console.log("brothereww",currentCategories)
+  // const categories = data;
+  const currentCategories =
+  parentCategories
+  ?? data?.data?.formattedData    // ← grab the inner array
+  ?? [];
   const handleCategoryClick = (category: CustomCategory) => {
     if (category.subcategories && category.subcategories.length > 0) {
       setParentCategories(category.subcategories as CustomCategory[]);
@@ -48,11 +52,18 @@ export const CategoriesSidebar = ({
       handleOpenChange(false); // Close the sidebar
     }
   };
+  const handleBackClick = () => {
+    if(parentCategories){
+      setParentCategories(null);
+      setselectedCategpry(null);
+    }
+  };
+
   const backgroundColor=selectedCategpry?.color || 'white';
 
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent
       side="left"
       className="p-0 transition-none"
@@ -66,7 +77,7 @@ export const CategoriesSidebar = ({
         <ScrollArea className="flex flex-col overflow-y-auto h-full pb-2">
           {parentCategories && (
             <button
-              onClick={() => {}}
+              onClick={handleBackClick}
               className="w-full text-left p-4 hover:bg-black hover:text-white flex items-center text-base font-medium cursor-pointer"
             >
               <ChevronLeftIcon className="size-4 mr-2" />
@@ -74,16 +85,18 @@ export const CategoriesSidebar = ({
             </button>
           )}
           {currentCategories.map((category: CustomCategory) => (
-            <button
-              key={category.slug}
-              onClick={() => handleCategoryClick(category)}
-              className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center text-base font-medium cursor-pointer"
-            >
-              {category.name}
-              {category.subcategories && category.subcategories.length > 0 && (
-                <ChevronRightIcon className="size-4" />
-              )}
-            </button>
+            (
+              <button
+                key={category.slug}
+                onClick={() => handleCategoryClick(category)}
+                className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center text-base font-medium cursor-pointer"
+              >
+                {category.name}
+                {category.subcategories && category.subcategories.length > 0 && (
+                  <ChevronRightIcon className="size-4" />
+                )}
+              </button>
+            )
           ))}
 
         </ScrollArea>

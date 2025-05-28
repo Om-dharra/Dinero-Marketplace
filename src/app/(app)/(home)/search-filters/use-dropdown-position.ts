@@ -23,7 +23,7 @@ export const useDropdownPosition = (
     
     return { top, left };
   }
-  return getDropdownPosition;
+  return {getDropdownPosition};
 }
 
 

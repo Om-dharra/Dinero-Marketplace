@@ -71,7 +71,7 @@ export const Categories = ({ data }: Props) => {
 
   return (
     <div className="relative w-full">
-      <CategoriesSidebar open={isSidebarOpen} onOpenChange={setisSidebarOpen} data={{categories}}/>
+      <CategoriesSidebar open={isSidebarOpen} onOpenChange={setisSidebarOpen} data={{data}}/>
       <div
       ref={measureRef}
       className="absolute opacity-0 pointer-events-none flex"
