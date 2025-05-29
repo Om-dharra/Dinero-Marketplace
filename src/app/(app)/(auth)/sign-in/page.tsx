@@ -1,9 +1,7 @@
-import React from 'react'
+import { SignInview } from '@/modules/auth/ui/views/sign-in-view'
 
 const Page = () => {
-  return (
-    <div>Log in</div>
-  )
+  return <SignInview />
 }
 
 export default Page

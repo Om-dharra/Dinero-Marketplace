@@ -5,6 +5,7 @@ import { baseProcedure, createTRPCRouter} from "@/trpc/init";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { AUTH_COOKIE } from "../constants";
+import { loginSchema, registerSchema } from "../schemas";
 
 
 export const authRouter=createTRPCRouter({
@@ -19,26 +20,24 @@ export const authRouter=createTRPCRouter({
     cookies.delete(AUTH_COOKIE)
   }),
   register:baseProcedure
-  .input(
-    z.object({
-      email: z.string().email(),
-      password: z.string(),
-      username:z
-        .string()
-        .min(3, { message: 'Username must be at least 3 characters long' })
-        .max(63, { message: 'Username must be at most 63 characters long' })
-        .regex(
-           /^[a-z0-9][a-z0-9-]*[a-z0-9]$/,
-           "UserName can only contain lowercase letters, numbers, and hyphens, and must start and end with a letter or number."
-        )
-        .refine(
-        (val) => !val.includes(" "), {
-          message: "Username cannot contain spaces"
-        })
-        .transform((val) => val.toLowerCase())
-      })
-  )
+  .input(registerSchema)
   .mutation(async ({ input ,ctx}) => {
+    const existingData=await ctx.db.find({
+      collection: 'users',
+      limit: 1,
+      where: {
+        username:{
+          equals: input.username,
+        }
+      },
+    })
+    const existingUser=existingData.docs[0];
+    if (existingUser) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Username already exists',
+      });
+    }
     await ctx.db.create({
       collection: 'users',
       data: {
@@ -72,13 +71,7 @@ export const authRouter=createTRPCRouter({
   }),
   
   login:baseProcedure
-  .input(
-    z.object({
-      email: z.string().email(),
-      password: z.string()
-    
-      })
-  )
+  .input(loginSchema)
   .mutation(async ({ input ,ctx}) => {
     const data=await ctx.db.login({
       collection: 'users',
