@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { ListFilterIcon } from "lucide-react";
 import { CategoriesSidebar } from "./categories-sidebar";
 import { CategoriesGetManyOutput } from "@/modules/categories/server/types";
+import { useParams } from "next/navigation";
 
 interface Props {
   data: CategoriesGetManyOutput;
@@ -15,12 +16,12 @@ interface Props {
 
 export const Categories = ({ data }: Props) => {
   // Convert to array if needed
-
+  const params = useParams();
   
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const viewAllRef = useRef<HTMLDivElement>(null);
-
+  const categoryParam= params.category as string | undefined;
   const [visibleCount, setVisibleCount] = useState(data.length);
   const [isAnyHovered, setisAnyHovered] = useState(false);
   const [isSidebarOpen, setisSidebarOpen] = useState(false);
@@ -95,6 +96,7 @@ export const Categories = ({ data }: Props) => {
         ))}
         <div ref={viewAllRef} className="shrink-0">
           <Button
+          variant="elevated"  
           className={cn("h-11 px-4 transparent border-transparent rounded-full bg-white hover:bg-white hover:border-primary text-black",
             isActiveCategoryHidden && !isAnyHovered && "bg-white border-primary",
           )}
