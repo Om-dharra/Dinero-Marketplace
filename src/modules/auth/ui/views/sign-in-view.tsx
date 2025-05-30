@@ -1,8 +1,10 @@
 "use client";
+
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTRPC } from '@/trpc/client';
-import { useMutation } from '@tanstack/react-query';
+// import { useTRPC } from '@/trpc/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { Poppins } from 'next/font/google'
@@ -15,6 +17,7 @@ import { loginSchema } from '../../schemas';
 
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { useTRPC } from '@/trpc/client';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -23,18 +26,23 @@ const poppins = Poppins({
 
 export const SignInview = () => {
   const router = useRouter();
-  const trpc= useTRPC();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const login = useMutation(trpc.auth.login.mutationOptions({
-    onError:(error) => {
+    onError: (error) => {
       toast.error(error.message || 'An error occurred while registering');
     },
-    onSuccess:()=>{
+    onSuccess: async() => {
+      await queryClient.invalidateQueries(trpc.auth.session.queryFilter())
       router.push('/')
 
     }
   }));
+
+
+
   const form = useForm<z.infer<typeof loginSchema>>({
-    mode:'all',
+    mode: 'all',
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
@@ -68,41 +76,41 @@ export const SignInview = () => {
                 </Link>
               </Button>
             </div>
-          <h1 className='text-4xl font-medium'>
-            Welcome back to Dinero
-          </h1>
-          
-          <FormField 
-          name="email"
-          render={({field}) => (
-            <FormItem>
-              <FormLabel className='text-base'>Email</FormLabel>
-              <FormControl>
-                <Input  {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}/>
-          <FormField 
-          name="password"
-          render={({field}) => (
-            <FormItem>
-              <FormLabel className='text-base'>Password</FormLabel>
-              <FormControl>
-                <Input {...field} type='password'/>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}/>
-          <Button
-          type='submit'
-          size='lg'
-          variant='elevated'
-          className='bg-black text-white hover:bg-green-500 hover:text-primary'
-          disabled={login.isPending}
-          >
-            Log In
-          </Button>
+            <h1 className='text-4xl font-medium'>
+              Welcome back to Dinero
+            </h1>
+
+            <FormField
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='text-base'>Email</FormLabel>
+                  <FormControl>
+                    <Input  {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            <FormField
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='text-base'>Password</FormLabel>
+                  <FormControl>
+                    <Input {...field} type='password' />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            <Button
+              type='submit'
+              size='lg'
+              variant='elevated'
+              className='bg-black text-white hover:bg-green-500 hover:text-primary'
+              disabled={login.isPending}
+            >
+              Log In
+            </Button>
           </form>
         </Form>
       </div>
