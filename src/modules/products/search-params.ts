@@ -5,7 +5,7 @@ export const sortValues = ["curated", "trending", "Hyped"] as const;
 
 const params={
   
-  sort: parseAsStringLiteral(sortValues).withDefault("curated"),
+  // sort: parseAsStringLiteral(sortValues).withDefault("curated"),
 
   minPrice: parseAsString
     .withOptions({

@@ -6,16 +6,11 @@ interface Props {
   category: CategoriesGetManyOutput[1];
   // Indicates if the subcategory menu is open
   isOpen: boolean;
-  position: {
-    top: number;
-    left: number;
-  };
 }
 
 export const SubcategoryMenu = ({
   category,
   isOpen,
-  position,
 }: Props) => {
   // Hide menu if not open or no subcategories
   if (
@@ -29,10 +24,10 @@ export const SubcategoryMenu = ({
   const backgroundColor = category.color || "#F5F5F5";
   return (
     <div
-      className="fixed z-100"
+      className="absolute z-100"
       style={{
-        top: position.top,
-        left: position.left,
+        top: "100%",
+        left: 0,
       }}
     >
       <div className="h-3 w-60" />
