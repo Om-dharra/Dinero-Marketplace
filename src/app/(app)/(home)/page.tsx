@@ -12,9 +12,9 @@ interface Props {
 }
 
 const Page = async({ searchParams }:Props) => {
-  const queryClient=getQueryClient();
-
   const filters = await loadProductsFilters(searchParams);
+  
+  const queryClient=getQueryClient();
   void queryClient.prefetchInfiniteQuery(trpc.products.getMany.infiniteQueryOptions({
     ...filters,
     limit:DEFAULT_LIMIT,
