@@ -14,6 +14,8 @@ import { Products } from './collections/Products'
 import Tags from './collections/Tags'
 import { Tenants } from './collections/Tenants'
 import { Config } from './payload-types'
+import { Orders } from './collections/Orders'
+import { Reviews } from './collections/Reviews'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -24,7 +26,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media,Categories, Products,Tags,Tenants],
+  collections: [Users, Media,Categories, Products,Tags,Tenants,Orders,Reviews],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

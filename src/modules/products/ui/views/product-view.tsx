@@ -1,33 +1,49 @@
 "use client";
+import dynamic from "next/dynamic";
 import { StarRating } from "@/components/star-rating";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency, generateTenantURL } from "@/lib/utils";
 import { useTRPC } from "@/trpc/client";
-import {  useSuspenseQuery } from "@tanstack/react-query";
-import { LinkIcon, StarIcon } from "lucide-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { CheckCheckIcon, CheckIcon, LinkIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
+import { toast } from "sonner";
+import { set } from "date-fns";
+
+// import { CartButton } from "../components/cart-button";
+const CartButton = dynamic(
+  () => import("../components/cart-button").then((mod) => mod.CartButton),
+  {
+    ssr: false,
+    loading: () => (
+      <Button disabled className="flex-1 bg-green-400">Add to cart</Button>
+    ),
+  }
+);
 
 
 interface ProductViewProps {
   productId: string;
   tenantSlug: string;
+
 }
 
-export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
-  const trpc=useTRPC();
-  const { data }=useSuspenseQuery(trpc.products.getOne.queryOptions({
+export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
+  const trpc = useTRPC();
+  const { data } = useSuspenseQuery(trpc.products.getOne.queryOptions({
     id: productId,
   })
   )
+  const [isCopied, setIsCopied] = useState(false);
   return (
-    <div className="px-4 lg:px-12 py-10">
+    <div className="px-4 lg:px-12 py-15">
       <div className="border rounded-sm bg-white overflow-hidden">
         <div className="relative aspect-[3.9] border-b">
           <Image
-            src={data.image?.url || "/auth-bg.jpg"} 
+            src={data.image?.url || "/auth-bg.jpg"}
             alt={data.name}
             fill
             className="object-cover"
@@ -65,27 +81,30 @@ export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
               <div className="hidden lg:flex px-4 py-4 items-center justify-center">
                 <div className="flex items-center gap-1">
                   <StarRating
-                  rating={3}
-                  iconClassName="size-4"
-                  /> 
+                    rating={data.reviewRating}
+                    iconClassName="size-4"
+                  />
+                  <p className="text-base font-medium">
+                  {data.reviewCount} ratings
+                </p>
                 </div>
               </div>
             </div>
             <div className="block lg:hidden px-6 py-4 items-center justify-center border-b">
               <div className="flex items-center gap-1">
                 <StarRating
-                  rating={3}
+                  rating={data.reviewRating}
                   iconClassName="size-4"
                 />
                 <p className="text-base font-medium">
-                  {5} ratings
+                  {data.reviewCount} ratings
                 </p>
               </div>
             </div>
             <div className="p-6">
               {data.description ? (
                 <p>{data.description}</p>
-              ):(
+              ) : (
                 <p className="font-medium text-muted-foreground italic">
                   No description available for this product.
                 </p>
@@ -96,27 +115,32 @@ export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
             <div className="border-t lg:border-t-0 lg:border-l h-full">
               <div className="flex flex-col gap-4 p-6 border-b">
                 <div className="flex flex-row items-center gap-2">
+
+                  <CartButton
+                    isPurchased={data.isPurchased}
+                    productId={productId}
+                    tenantSlug={tenantSlug}
+                  />
                   <Button
-                  variant="elevated"
-                  className="flex-1 bg-green-400"
+                    className="size-12"
+                    variant="elevated"
+                    onClick={() => {
+                      setIsCopied(true);
+                      navigator.clipboard.writeText(window.location.href);
+                      toast.success("URl copied to clipboard!");
+                      setTimeout(() => {
+                        setIsCopied(false);
+                      }, 2000);
+                    }}
+                    disabled={isCopied}
                   >
-                    Add to Cart
-                  </Button>
-                  <Button
-                  className="size-12"
-                  variant="elevated"
-                  onClick={() => {
-                    // Handle wishlist logic here
-                  }}
-                  disabled={false}
-                  >
-                    <LinkIcon/>
+                    {isCopied ? <CheckIcon/>:<LinkIcon />}
                   </Button>
                 </div>
                 <p className="text-center font-medium">
-                  {data.refundPolicy==="no-refunds" ? (
+                  {data.refundPolicy === "no-refunds" ? (
                     "No refunds available for this product."
-                  ):(
+                  ) : (
                     `${data.refundPolicy} money back guarantee.`
                   )}
                 </p>
@@ -125,37 +149,30 @@ export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-medium">Ratings</h3>
                   <div className="flex items-center gap-x-1 font-medium">
-                    <StarIcon className="size-4 fill-black"/>
-                    <p>({5})</p>
-                    <p className="text-base">{5} ratings</p>
+                    <StarIcon className="size-4 fill-black" />
+                    <p>({data.reviewRating})</p>
+                    <p className="text-base">{data.reviewCount} ratings</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-[auto_1fr_auto] gap-3 mt-4">
-                  { [5,4,3,2,1].map((stars) => (
+                  {[5, 4, 3, 2, 1].map((stars) => (
                     <Fragment key={stars}>
-                      <div className="font-medium">{stars}{stars === 1? "star" : "stars"}</div>
+                      <div className="font-medium">{stars}{stars === 1 ? "star" : "stars"}</div>
                       <Progress
-                        value={5}
+                        value={data.ratingDistribution[stars]}
                         className="h-[1lh]"
-                        />
-                        <div className="font-medium">
-                          {5}%
-                        </div>
+                      />
+                      <div className="font-medium">
+                        {data.ratingDistribution[stars]}%
+                      </div>
                     </Fragment>
-                    ))}
-
+                  ))}
                 </div>
-
               </div>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-      
     </div>
   );
 };
