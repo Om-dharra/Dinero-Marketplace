@@ -1,4 +1,5 @@
 import { isSuperAdmin } from '@/lib/access';
+// import { Tenant } from '@/payload-types';
 import type { CollectionConfig } from 'payload'
 
 
@@ -10,7 +11,7 @@ export const Products: CollectionConfig = {
     //   const tenant= req.user?.tenants?.[0]?.tenant as Tenant;
     //   return Boolean(tenant?.stripeDetailsSubmitted);
 
-    // }
+    // },
     delete: ({ req }) => isSuperAdmin(req.user),
   },
   admin: {

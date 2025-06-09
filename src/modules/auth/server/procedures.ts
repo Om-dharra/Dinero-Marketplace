@@ -1,12 +1,11 @@
-import {headers as getHeaders} from "next/headers";
-
+import {cookies, headers as getHeaders} from "next/headers";
+import config from '@payload-config';
 import { baseProcedure, createTRPCRouter} from "@/trpc/init";
-
+import { logout as payloadLogout } from '@payloadcms/next/auth';
 import { TRPCError } from "@trpc/server";
 import { loginSchema, registerSchema } from "../schemas";
 import { generateAuthCookie } from "../utils";
 import { stripe } from "@/lib/stripe";
-
 
 export const authRouter=createTRPCRouter({
   session:baseProcedure.query(async ({ ctx }) => {
@@ -109,5 +108,6 @@ export const authRouter=createTRPCRouter({
     })
     return data;
   }),
+
 });
 

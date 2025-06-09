@@ -6,10 +6,10 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useTRPC } from '@/trpc/client';
 import { useState } from 'react';
-
 import { NavbarSidebar } from './navbar-sidebar';
 import { MenuIcon } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery} from '@tanstack/react-query';
+
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['700'],
@@ -32,7 +32,6 @@ const NavbarItem=({
         'text-primary': isActive,
         'text-muted-foreground': !isActive,
       })}
-
       asChild
     >
       <Link
@@ -59,6 +58,8 @@ export const Navbar = () => {
 
   const trpc=useTRPC();
   const session = useQuery(trpc.auth.session.queryOptions());
+  
+
   return (
       <nav className="flex items-center justify-between bg-white p-4 shadow-md">
     <Link href="/" className="pl-6 flex items-center">
@@ -90,6 +91,7 @@ export const Navbar = () => {
         DashBoard
       </Link>
     </Button>
+    
   </div>
 ) : (
   <div className="hidden lg:flex">
