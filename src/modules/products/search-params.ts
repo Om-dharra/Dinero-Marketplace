@@ -1,11 +1,17 @@
-import { parseAsArrayOf,createLoader,parseAsString } from "nuqs/server"
+import { parseAsArrayOf,createLoader,parseAsString, parseAsStringLiteral } from "nuqs/server"
 
 export const sortValues = ["curated", "trending", "Hyped"] as const;
 
 
 const params={
   
-  // sort: parseAsStringLiteral(sortValues).withDefault("curated"),
+  search: parseAsString
+    .withOptions({
+      clearOnDefault: true,
+    })
+    .withDefault(""),
+    
+  sort: parseAsStringLiteral(sortValues).withDefault("curated"),
 
   minPrice: parseAsString
     .withOptions({
