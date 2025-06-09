@@ -2,9 +2,7 @@
 
 import { generateTenantURL } from "@/lib/utils";
 
-import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import Image from "next/image";
+
 import Link from "next/link";
 // import { CheckoutButton } from "@/modules/checkout/ui/components/checkout-button";
 import { Button } from "@/components/ui/button";

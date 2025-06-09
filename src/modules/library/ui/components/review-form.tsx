@@ -1,61 +1,59 @@
 import { z } from "zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import {  zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useTRPC} from "@/trpc/client";
+import { useTRPC } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { StarPicker } from "@/components/star-picker";
 
-import { Form,FormControl,FormField,FormItem,FormLabel,FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem,FormMessage } from "@/components/ui/form";
 
 import { ReviewsGetOneOutput } from "@/modules/reviews/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { set } from "date-fns";
 import { toast } from "sonner";
-import { create } from "domain";
 
-interface Props{
-  productId:string,
+interface Props {
+  productId: string,
   initialData?: ReviewsGetOneOutput;
 }
 
 const formSchema = z.object({
-  rating: z.number().min(1,{message:"Rating is required"}).max(5),
-  description:z.string().min(1,{message:"Description is required"}),
+  rating: z.number().min(1, { message: "Rating is required" }).max(5),
+  description: z.string().min(1, { message: "Description is required" }),
 })
 
 export const ReviewForm = ({ productId, initialData }: Props) => {
-  const [isPreview,setIsPreview] = useState(!!initialData);
+  const [isPreview, setIsPreview] = useState(!!initialData);
 
   const trpc = useTRPC();
-  const queryClient=useQueryClient();
+  const queryClient = useQueryClient();
 
-  const createReview=useMutation(trpc.reviews.create.mutationOptions({
-    onSuccess:()=>{
+  const createReview = useMutation(trpc.reviews.create.mutationOptions({
+    onSuccess: () => {
       queryClient.invalidateQueries(trpc.reviews.getOne.queryOptions({
         productId,
       }));
       setIsPreview(true);
     },
-    onError:(error)=>{
+    onError: (error) => {
       toast.error(error.message)
     },
   }));
-  const updateReview=useMutation(trpc.reviews.update.mutationOptions({
-    onSuccess:()=>{
+  const updateReview = useMutation(trpc.reviews.update.mutationOptions({
+    onSuccess: () => {
       queryClient.invalidateQueries(trpc.reviews.getOne.queryOptions({
         productId,
       }));
       setIsPreview(true);
     },
-    onError:(error)=>{
+    onError: (error) => {
       toast.error(error.message)
     },
   }));
 
-  const form=useForm<z.infer<typeof formSchema>>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       rating: initialData?.rating ?? 0,
@@ -63,20 +61,20 @@ export const ReviewForm = ({ productId, initialData }: Props) => {
     },
   });
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    if(initialData){
+    if (initialData) {
       updateReview.mutate({
         reviewId: initialData.id,
         rating: values.rating,
         description: values.description,
       })
-    }else{
-        createReview.mutate({
-          productId,
-          rating: values.rating,
-          description: values.description,
-        });
-      }
-    
+    } else {
+      createReview.mutate({
+        productId,
+        rating: values.rating,
+        description: values.description,
+      });
+    }
+
   };
 
   return (
@@ -88,36 +86,36 @@ export const ReviewForm = ({ productId, initialData }: Props) => {
           {isPreview ? "Your Rating:" : "Add a Rating:"}
         </p>
         <FormField
-        control={form.control}
-        name="rating"
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <StarPicker
-                value={field.value}
-                onChange={field.onChange}
-                disabled={isPreview}
-              />
-            </FormControl>
+          control={form.control}
+          name="rating"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <StarPicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={isPreview}
+                />
+              </FormControl>
               <FormMessage />
-          </FormItem>
-        )}
+            </FormItem>
+          )}
         />
         <FormField
-        control={form.control}
-        name="description"
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <Textarea
-                placeholder="Write your review here..."
-                disabled={isPreview}
-                {...field}
-              />
-            </FormControl>
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Textarea
+                  placeholder="Write your review here..."
+                  disabled={isPreview}
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
-          </FormItem>
-        )}
+            </FormItem>
+          )}
         />
         {!isPreview && (
           <Button
@@ -127,7 +125,7 @@ export const ReviewForm = ({ productId, initialData }: Props) => {
             size="lg"
             className="bg-black text-white hover:bg-green-400 hover:text-primary w-fit"
           >
-            {initialData? "Update Review" : "Submit Review"}
+            {initialData ? "Update Review" : "Submit Review"}
           </Button>
         )}
       </form>
@@ -142,8 +140,37 @@ export const ReviewForm = ({ productId, initialData }: Props) => {
           Edit Review
 
         </Button>
-        )}
+      )}
     </Form>
 
   )
+}
+
+export const ReviewFormSkeleton = () => {
+  return (
+    <div className="flex flex-col gap-y-4">
+      <p className="font-medium">
+        Add a Rating
+      </p>
+
+      <StarPicker disabled/>
+
+      <Textarea
+        placeholder="Write your review here..."
+        disabled/>
+
+
+
+      <Button
+        variant="elevated"
+        disabled
+        type="button"
+        size="lg"
+        className="bg-black text-white hover:bg-green-400 hover:text-primary w-fit"
+      >
+        Submit Review
+      </Button>
+
+    </div>
+  );
 }

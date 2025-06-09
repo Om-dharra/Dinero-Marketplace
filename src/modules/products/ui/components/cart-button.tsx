@@ -12,6 +12,7 @@ interface Props {
 }
 
 export const CartButton = ({ tenantSlug, productId, isPurchased }: Props) => {
+  const cart = useCart(tenantSlug);
   if (isPurchased) {
     return (
       <Button
@@ -25,7 +26,6 @@ export const CartButton = ({ tenantSlug, productId, isPurchased }: Props) => {
       </Button>
     )
   }
-  const cart = useCart(tenantSlug);
   return (
     <Button
       variant="elevated"

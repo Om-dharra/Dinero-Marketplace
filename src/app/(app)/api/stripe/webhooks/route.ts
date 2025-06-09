@@ -36,6 +36,7 @@ export async function POST(req:Request){
 
     const permittedEvents :string[]=[
       "checkout.session.completed",
+      "account.updated",
     ];
     const payload =await getPayload({config});
     if(permittedEvents.includes(event.type)){
@@ -83,6 +84,24 @@ export async function POST(req:Request){
                 },
               });
             }
+            break;
+          case "account.updated":
+            data = event.data.object as Stripe.Account;
+            if(!data.id){
+              throw new Error("Account ID not found in event data");
+            }
+           
+            await payload.update({
+              collection: "tenants",
+              where:{
+                stripeAccountId:{
+                  equals: data.id,
+                }
+              },
+              data:{
+                stripeDetailsSubmitted:data.details_submitted,
+              }
+            });
             break;
           default:
             throw new Error(`Unhandled event type: ${event.type}`);

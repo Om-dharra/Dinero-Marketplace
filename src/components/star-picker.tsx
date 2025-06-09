@@ -4,7 +4,6 @@
 import { useState } from "react"
 import { StarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { set } from "date-fns";
 
 interface StarPickerProps {
   value?: number;
@@ -34,7 +33,7 @@ export const StarPicker = ({
           type="button"
           disabled={disabled}
           className={cn("p-0.5 hover:scale-110",!disabled && "cursor-pointer")}
-          onClick={() => onChange?.(star)}
+          onClick={() => handleOnChange(star)}
           onMouseEnter={()=>setHoveredValue(star)}
           onMouseLeave={()=>setHoveredValue(0)}
           

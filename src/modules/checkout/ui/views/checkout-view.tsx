@@ -12,10 +12,6 @@ import { InboxIcon, LoaderIcon } from "lucide-react";
 import { useCheckoutStates } from "../../hooks/use-checkout-states";
 import { useRouter } from "next/navigation";
 
-interface CheckoutViewProps {
-  tenantSlug: string;
-}
-
 
 export const CheckoutView = ({ tenantSlug }: { tenantSlug: string }) => {
   const router=useRouter();
@@ -38,7 +34,7 @@ export const CheckoutView = ({ tenantSlug }: { tenantSlug: string }) => {
       }
     },    
     onError:(error) => {
-      if(error?.data?.code === "NOT_FOUND") {
+      if(error?.data?.code === "UNAUTHORIZED") {
         router.push('/sign-in');
       }
       toast.error(error.message)

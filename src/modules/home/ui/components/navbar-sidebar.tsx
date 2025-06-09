@@ -8,7 +8,7 @@ interface NavbarItem{
 }
 
 interface Props{
-  item : NavbarItem;
+  item : NavbarItem[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -23,7 +23,7 @@ export const NavbarSidebar = ({ item, open, onOpenChange }: Props) => {
           </SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex flex-col overflow-y-auto h-full pb-2">
-          {item.map((navItem) => (
+          {item.map((navItem:NavbarItem) => (
             <a
               key={navItem.href}
               href={navItem.href}

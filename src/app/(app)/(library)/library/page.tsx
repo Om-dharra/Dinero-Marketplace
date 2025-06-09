@@ -5,6 +5,8 @@ import { LibraryView } from '@/modules/library/ui/views/library-view'
 import { getQueryClient, trpc } from '@/trpc/server';
 import React from 'react'
 
+export const dynamic = 'force-dynamic';
+
 const Page = async() => {
   const queryClient=getQueryClient();
 

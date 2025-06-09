@@ -22,7 +22,6 @@ export const CheckoutItem = ({
   productUrl,
   tenantUrl,
   tenantName,
-  id,
   price,
   onRemove,
 }: CheckoutItemProps) => {

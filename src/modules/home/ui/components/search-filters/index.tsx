@@ -4,15 +4,9 @@ import { useTRPC } from "@/trpc/client";
 import { Categories } from "./categories";
 import { SearchInput } from "./search-input";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { CategoriesGetManyOutput } from "@/modules/categories/server/types";
 import { useParams } from "next/navigation";
 import { DEFAULT_BG_COLOR } from "@/modules/home/constants";
-import { sub } from "date-fns";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { BreadcrumbNavigation } from "./breadcrumb-navigation";
-interface Props{
-  data:CategoriesGetManyOutput[1];
-}
 
 
 export const SearchFilters = () =>{
@@ -52,8 +46,6 @@ export const SearchFilters = () =>{
 };
 
 export const SearchFilterLoading = () => {
-  const trpc= useTRPC();
-  const { data } = useSuspenseQuery(trpc.categories.getMany.queryOptions());
   return (
     <div className="px-4 lg:px-12 py-8 border-b flex flex-col hap-4 w-full justify-between gap-3"
     style={{backgroundColor: "#F5F5F5"}}>

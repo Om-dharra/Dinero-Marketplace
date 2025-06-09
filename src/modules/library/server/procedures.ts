@@ -1,5 +1,5 @@
 
-import { Category, Media, Tenant } from "@/payload-types";
+import {  Media, Tenant } from "@/payload-types";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 import { z } from "zod";
@@ -52,7 +52,6 @@ export const libraryRouter = createTRPCRouter({
       return product;
     }
     ),
-
   getMany: protectedProcedure
     .input(
       z.object({

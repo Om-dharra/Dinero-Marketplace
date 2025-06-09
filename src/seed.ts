@@ -2,6 +2,7 @@ import { getPayload } from "payload";
 import type { Payload } from "payload";
 import config from "@payload-config";
 import { setTimeout } from "timers/promises";
+import { stripe } from "./lib/stripe";
 
 const categories = [
   {
@@ -153,13 +154,16 @@ async function withRetries<T>(
   while (true) {
     try {
       return await fn();
-    } catch (err: any) {
-      const isTransient =
-        // driver‐level WriteConflict
-        err.codeName === "WriteConflict"
-        // or in a transaction you might get this label
-        || Array.isArray(err.errorLabels)
-           && err.errorLabels.includes("TransientTransactionError");
+    } catch (err: unknown) {
+      const isWriteConflict = typeof err === "object" && err !== null && "codeName" in err && (err as { codeName?: string }).codeName === "WriteConflict";
+      const isTransientTransactionError =
+        typeof err === "object" &&
+        err !== null &&
+        "errorLabels" in err &&
+        Array.isArray((err as { errorLabels?: unknown }).errorLabels) &&
+        ((err as { errorLabels: unknown[] }).errorLabels).includes("TransientTransactionError");
+
+      const isTransient = isWriteConflict || isTransientTransactionError;
 
       if (!isTransient || attempt >= maxRetries) {
         throw err;
@@ -167,8 +171,12 @@ async function withRetries<T>(
 
       attempt++;
       const delay = baseDelayMs * Math.pow(2, attempt);
+      const errorMessage =
+        typeof err === "object" && err !== null && "message" in err
+          ? (err as { message: string }).message
+          : String(err);
       console.warn(
-        `Transient error on attempt ${attempt}/${maxRetries} (${err.message}). ` +
+        `Transient error on attempt ${attempt}/${maxRetries} (${errorMessage}). ` +
         `Retrying after ${delay}ms…`
       );
       await setTimeout(delay);
@@ -178,12 +186,16 @@ async function withRetries<T>(
 
 const seed= async () => {
   const payload: Payload = await getPayload({ config });
+
+  const adminAccount=await stripe.accounts.create({})
+
+
   const adminTenant=await payload.create({
     collection: "tenants",
     data: {
       name: "admin",
       slug: "admin",
-      stripeAccountId: "admin",
+      stripeAccountId: adminAccount.id,
     },
   });
 

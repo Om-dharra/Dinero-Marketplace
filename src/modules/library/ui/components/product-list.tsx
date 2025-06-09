@@ -6,7 +6,6 @@ import {useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { DEFAULT_LIMIT } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { InboxIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { ProductCardSkeleton } from "@/modules/products/ui/components/product-card";
 import { ProductCard } from "./product-card";
 

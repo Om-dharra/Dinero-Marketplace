@@ -1,9 +1,9 @@
 import {Sheet, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { use, useState } from "react";
+import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { CategoriesGetManyOutput } from "@/modules/categories/server/types";
 
@@ -31,7 +31,7 @@ export const CategoriesSidebar = ({
     onOpenChange(open);
   };
   // const categories = data;
-  let currentCategories =
+  const currentCategories =
   parentCategories
   ?? data   // ← grab the inner array
   ?? [];

@@ -1,6 +1,5 @@
 "use client";
 import { useRef, useState } from "react";
-import { Category } from "@/payload-types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SubcategoryMenu } from "./subcategory-menu";

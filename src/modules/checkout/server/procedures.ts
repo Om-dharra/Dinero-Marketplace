@@ -1,17 +1,48 @@
 import { z } from "zod";
-import type { Sort, Where } from "payload";
-
 import { TRPCError } from "@trpc/server";
-import { DEFAULT_LIMIT } from "@/constants";
 import { Media, Tenant } from "@/payload-types";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import Stripe from "stripe";
 import { CheckoutMetadata, ProductMetadata } from "../types";
 import { stripe } from "@/lib/stripe";
+import { generateTenantURL } from "@/lib/utils";
 
 
 
 export const checkoutRouter = createTRPCRouter({
+  verify: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      if(!ctx.session.user)return false;
+      const user= await ctx.db.findByID({
+        collection: 'users',
+        id: ctx.session.user.id,
+        depth:0,
+      });
+
+      if(!user){
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
+      const tenantId=user.tenants?.[0]?.tenant as string;
+      const tenant = await ctx.db.findByID({
+        collection: 'tenants',
+        id: tenantId,
+      });
+      if (!tenant) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Tenant not found" });
+      }
+      const accountLink=await stripe.accountLinks.create({
+        account: tenant.stripeAccountId,
+        refresh_url: `${process.env.NEXT_PUBLIC_APP_URL!}/admin`,
+        return_url: `${process.env.NEXT_PUBLIC_APP_URL!}/admin`,
+        type: 'account_onboarding',
+      });
+
+      if(!accountLink.url){
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Failed to create account link" });
+      }
+      return { url:accountLink.url };
+    }
+    ),
   purchase: protectedProcedure
     .input(
       z.object({
@@ -74,21 +105,17 @@ export const checkoutRouter = createTRPCRouter({
 
               } as ProductMetadata
             },
-
-
           },
         }))
       if (!ctx.session.user) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "User session not found" });
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "You need to login to checkout" });
       }
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-      if (!appUrl?.startsWith('http')) {
-        throw new Error('NEXT_PUBLIC_APP_URL must start with http:// or https://');
-      }
+      const domain=generateTenantURL(input.tenantSlug);
+
       const checkout = await stripe.checkout.sessions.create({
         customer_email: ctx.session.user.email,
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?success=true`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/tenants/${input.tenantSlug}/checkout?cancel=true`,
+        success_url: `${domain}/checkout?success=true`,
+        cancel_url: `${domain}/checkout?cancel=true`,
         mode: "payment",
         line_items: lineItems,
         invoice_creation: {

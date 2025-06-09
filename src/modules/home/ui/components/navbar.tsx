@@ -1,11 +1,9 @@
 "use client";
 
-import React, { use } from 'react'
 import { Poppins } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { usePathname } from 'next/navigation'
 import { useTRPC } from '@/trpc/client';
 import { useState } from 'react';
 
@@ -57,7 +55,6 @@ const navbarItems = [
 ];
 
 export const Navbar = () => {
-  const pathName=usePathname();
   const [isSidebarOpen, setIsSidebarOpen] =useState(false);
 
   const trpc=useTRPC();

@@ -152,6 +152,10 @@ export const productsRouter = createTRPCRouter({
         where["tenant.slug"] = {
           equals: input.tenantSlug,
         };
+      }else{
+        where["isPrivate"]={
+          not_equals: true, // Exclude private products
+        }
       }
       if (input.category) {
         // Optionally, you can fetch category details here if needed

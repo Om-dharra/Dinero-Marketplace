@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { ChevronDownIcon, ChevronRightIcon, Tags } from "lucide-react";
+import { ChevronDownIcon, ChevronRightIcon} from "lucide-react";
 import { useState } from "react";
 import { PriceFilter } from "./price-filter";
 import { useProductsFilters } from "../../hooks/use-products-filters";
@@ -16,9 +16,8 @@ interface ProductFiltersProps {
 const ProductFilter = ({ title, className, children }: ProductFiltersProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const Icon=isOpen ? ChevronDownIcon : ChevronRightIcon
-
   return(
-    <div className={cn("p-4 border-b flex flex-col gap-2")}>
+    <div className={cn("p-4 border-b flex flex-col gap-2", className)}>
       <div
       onClick={()=>setIsOpen((current)=>!current)}
       className="flex items-center justify-between cursor-pointer"

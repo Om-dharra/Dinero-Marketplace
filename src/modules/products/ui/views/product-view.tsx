@@ -6,12 +6,12 @@ import { Progress } from "@/components/ui/progress";
 import { formatCurrency, generateTenantURL } from "@/lib/utils";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { CheckCheckIcon, CheckIcon, LinkIcon, StarIcon } from "lucide-react";
+import {  CheckIcon, LinkIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useState } from "react";
 import { toast } from "sonner";
-import { set } from "date-fns";
+import { RichText } from "@payloadcms/richtext-lexical/react";
 
 // import { CartButton } from "../components/cart-button";
 const CartButton = dynamic(
@@ -39,7 +39,7 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
   )
   const [isCopied, setIsCopied] = useState(false);
   return (
-    <div className="px-4 lg:px-12 py-15">
+    <div className="px-4 lg:px-12 py-10">
       <div className="border rounded-sm bg-white overflow-hidden">
         <div className="relative aspect-[3.9] border-b">
           <Image
@@ -85,8 +85,8 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                     iconClassName="size-4"
                   />
                   <p className="text-base font-medium">
-                  {data.reviewCount} ratings
-                </p>
+                    {data.reviewCount} ratings
+                  </p>
                 </div>
               </div>
             </div>
@@ -103,7 +103,7 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
             </div>
             <div className="p-6">
               {data.description ? (
-                <p>{data.description}</p>
+                <RichText data={data.description}/>
               ) : (
                 <p className="font-medium text-muted-foreground italic">
                   No description available for this product.
@@ -134,7 +134,7 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                     }}
                     disabled={isCopied}
                   >
-                    {isCopied ? <CheckIcon/>:<LinkIcon />}
+                    {isCopied ? <CheckIcon /> : <LinkIcon />}
                   </Button>
                 </div>
                 <p className="text-center font-medium">
@@ -176,3 +176,21 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
     </div>
   );
 };
+
+export const ProductViewSkeleton = () => {
+  return (
+    <div className="px-4 lg:px-12 py-10">
+      <div className="border rounded-sm bg-white overflow-hidden">
+        <div className="relative aspect-[3.9] border-b">
+          <Image
+            src={"/auth-bg.jpg"}
+            alt="Placeholder"
+            fill
+            className="object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  )
+
+}

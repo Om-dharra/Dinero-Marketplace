@@ -19,11 +19,11 @@ export const ProductListView =({ category,tenantSlug,narrowView }:Props)=> {
             <div className='grid grid-cols-1 lg:grid:cols-6 xl:grid-cols-8 gap-y-6 gap-x-12 '>
           <div className='lg:col-span-2 xl:col-span-2'>
     
-          <div className='border p-2 '>
+          <div className="border rounded-md">
             <ProductFilters/>
           </div>
           </div>
-          <div className='lg:col-span-4 xl:span-span-6'>
+          <div className='lg:col-span-6 xl:span-span-8'>
           <Suspense fallback={<ProductListSkeleton narrowView={narrowView}/>}>
             <ProductList category={category} tenantSlug={tenantSlug} narrowView={narrowView}/>
           </Suspense>
