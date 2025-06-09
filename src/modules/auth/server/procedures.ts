@@ -31,7 +31,9 @@ export const authRouter=createTRPCRouter({
         message: 'Username already exists',
       });
     }
-
+    if (process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_')) {
+  throw new Error('Live Stripe key detected! Use a test key for this environment.');
+}
     const account=await stripe.accounts.create({});
 
     if(!account){
