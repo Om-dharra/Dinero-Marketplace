@@ -35,12 +35,32 @@ export const authRouter=createTRPCRouter({
   throw new Error('Live Stripe key detected! Use a test key for this environment.');
 }
     const account = await stripe.accounts.create({
-  type: 'express',
-  country: 'IN',                 // or 'US', 'GB', etc
-  email: input.email,            // (optional) pre-fill the user’s email
+  type: 'custom',
+  country: 'US',
+  business_type: 'individual',
+  email: input.email,
+  individual: {
+    first_name: 'Jane',
+    last_name:  'Doe',
+    ssn_last_4: '1234',
+    address: {
+      line1:       '123 Test St',
+      city:        'Testville',
+      state:       'CA',
+      postal_code: '12345',
+      country:     'US',
+    },
+  },
+  external_account: {
+    object:         'bank_account',
+    country:        'US',
+    currency:       'usd',
+    account_number: '000123456789',
+    routing_number: '110000000',
+  },
   capabilities: {
     card_payments: { requested: true },
-    transfers:    { requested: true },
+    transfers:     { requested: true },
   },
 });
 
