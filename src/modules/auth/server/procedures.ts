@@ -34,7 +34,15 @@ export const authRouter=createTRPCRouter({
     if (process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_')) {
   throw new Error('Live Stripe key detected! Use a test key for this environment.');
 }
-    const account=await stripe.accounts.create({});
+    const account = await stripe.accounts.create({
+  type: 'express',
+  country: 'IN',                 // or 'US', 'GB', etc
+  email: input.email,            // (optional) pre-fill the user’s email
+  capabilities: {
+    card_payments: { requested: true },
+    transfers:    { requested: true },
+  },
+});
 
     if(!account){
       throw new TRPCError({
