@@ -6,8 +6,6 @@ import Stripe from "stripe";
 import { CheckoutMetadata, ProductMetadata } from "../types";
 import { stripe } from "@/lib/stripe";
 import { generateTenantURL } from "@/lib/utils";
-import { getPayload } from "payload";
-import config from "@payload-config";
 
 
 export const checkoutRouter = createTRPCRouter({
@@ -89,7 +87,7 @@ export const checkoutRouter = createTRPCRouter({
       if (!tenant) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Tenant not found" });
       }
-      const payload =await getPayload({config});
+      
 
       const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
         products.docs.map((product) => ({
