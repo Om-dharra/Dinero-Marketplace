@@ -3,7 +3,7 @@ import { baseProcedure, createTRPCRouter} from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { loginSchema, registerSchema } from "../schemas";
 import { generateAuthCookie } from "../utils";
-import { stripe } from "@/lib/stripe";
+
 
 export const authRouter=createTRPCRouter({
   session:baseProcedure.query(async ({ ctx }) => {
@@ -34,52 +34,18 @@ export const authRouter=createTRPCRouter({
     if (process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_')) {
   throw new Error('Live Stripe key detected! Use a test key for this environment.');
 }
-    const account = await stripe.accounts.create({
-  type: 'custom',
-  country: 'US',
-  business_type: 'individual',
-  email: input.email,
-  individual: {
-    first_name: 'Jane',
-    last_name:  'Doe',
-    ssn_last_4: '1234',
-    address: {
-      line1:       '123 Test St',
-      city:        'Testville',
-      state:       'CA',
-      postal_code: '12345',
-      country:     'US',
-    },
-  },
-  external_account: {
-    object:         'bank_account',
-    country:        'US',
-    currency:       'usd',
-    account_number: '000123456789',
-    routing_number: '110000000',
-  },
-  capabilities: {
-    card_payments: { requested: true },
-    transfers:     { requested: true },
-  },
-});
-
-    if(!account){
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'Failed to create Stripe account',
-      });
-    }
+    
 
     const tenant=await ctx.db.create({
       collection: 'tenants',
       data: {
         name: input.username,
         slug: input.username,
-        stripeAccountId:account.id,
-
+        stripeAccountId:"acct_1RYAcoPS8mLJFxXg",
+        stripeDetailsSubmitted:true,
       },
     })
+   
     await ctx.db.create({
       collection: 'users',
       data: {
@@ -138,4 +104,3 @@ export const authRouter=createTRPCRouter({
   }),
 
 });
-

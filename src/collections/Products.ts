@@ -1,4 +1,5 @@
 import { isSuperAdmin } from '@/lib/access';
+import { Tenant } from '@/payload-types';
 // import { Tenant } from '@/payload-types';
 import type { CollectionConfig } from 'payload'
 
@@ -6,17 +7,16 @@ import type { CollectionConfig } from 'payload'
 export const Products: CollectionConfig = {
   slug: 'products',
   access: {
-    // create: ({ req }) => {
-    //   if(isSuperAdmin(req.user)) return true;
-    //   const tenant= req.user?.tenants?.[0]?.tenant as Tenant;
-    //   return Boolean(tenant?.stripeDetailsSubmitted);
-
-    // },
+    create: ({ req }) => {
+      if(isSuperAdmin(req.user)) return true;
+      const tenant= req.user?.tenants?.[0]?.tenant as Tenant;
+      return Boolean(tenant?.stripeDetailsSubmitted);
+    },
     delete: ({ req }) => isSuperAdmin(req.user),
   },
   admin: {
     useAsTitle: 'name',
-    // description:"You must verify your account before creating products.",
+    description:"You must verify your account before creating products.",
   },
   fields: [
     {

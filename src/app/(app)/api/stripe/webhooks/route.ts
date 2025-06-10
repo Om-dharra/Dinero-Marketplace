@@ -102,7 +102,7 @@ export async function POST(req:Request){
           //       stripeDetailsSubmitted:data.details_submitted,
           //     }
           //   });
-            // break;
+          //   break;
           default:
             throw new Error(`Unhandled event type: ${event.type}`);
         }

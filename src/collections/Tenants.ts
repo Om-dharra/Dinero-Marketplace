@@ -51,17 +51,17 @@ export const Tenants: CollectionConfig = {
       description:"Stripe Account ID associated with your shop",
     },
   },
-  // {
-  //   name:"stripeDetailsSubmitted",
-  //   type:"checkbox",
-  //   access: {
-  //     update: ({ req }) => isSuperAdmin(req.user),
-  //   },
-  //   admin:{
-  //     readOnly:true,
-  //     description:"You cannot create products untill you submit your stripe details.",
-  //   },
-  // },
+  {
+    name:"stripeDetailsSubmitted",
+    type:"checkbox",
+    access: {
+      update: ({ req }) => isSuperAdmin(req.user),
+    },
+    admin:{
+      readOnly:true,
+      description:"You cannot create products untill you submit your stripe details.",
+    },
+  },
   ],
 }
 

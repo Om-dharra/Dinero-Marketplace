@@ -31,6 +31,7 @@ export default buildConfig({
     },
     components:{
       beforeNavLinks:["@/components/stripe-verify#StripeVerify"],
+      afterDashboard:["@/components/home-button#HomeButton"],
     }
   },
   collections: [Users, Media,Categories, Products,Tags,Tenants,Orders,Reviews],

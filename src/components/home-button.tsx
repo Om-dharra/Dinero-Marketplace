@@ -1,12 +1,13 @@
 
 import { Button,Link } from "@payloadcms/ui"
 
-export const StripeVerify = () => {
+export const HomeButton = () => {
   return (
-    <Link href="/stripe-verify">
+    <Link href="/">
       <Button>
-        Verify Stripe Account
+        Home
       </Button>
     </Link>
+    
   )
 }
