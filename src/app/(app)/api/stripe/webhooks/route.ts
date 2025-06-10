@@ -11,6 +11,8 @@ import { stripe } from "@/lib/stripe";
 import { ExpandedLineItem } from "@/modules/checkout/types";
 
 export async function POST(req:Request){
+  console.log(`✅ Success: Stripe webhook request received`);
+  // Verify the request is coming from Stripe
   let event: Stripe.Event;
   try{
     event = stripe.webhooks.constructEvent(
