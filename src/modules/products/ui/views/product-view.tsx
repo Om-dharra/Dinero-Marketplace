@@ -81,14 +81,7 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                   </p>
 
                 </Link>
-                <Button
-                    className="size-12"
-                    variant="elevated"
-                    onClick={() => {
-                      setSeeReviews(true);
-                    }}
-                    disabled={isCopied}
-                  >See Reviews</Button>
+                
               </div>
               <div className="hidden lg:flex px-4 py-4 items-center justify-center">
                 <div className="flex items-center gap-1">
@@ -151,7 +144,9 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                   >
                     {isCopied ? <CheckIcon /> : <LinkIcon />}
                   </Button>
+                  
                 </div>
+                
                 <p className="text-center font-medium">
                   {data.refundPolicy === "no-refunds" ? (
                     "No refunds available for this product."
@@ -159,7 +154,16 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                     `${data.refundPolicy} money back guarantee.`
                   )}
                 </p>
+                <Button
+                    className=" bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg"
+                    onClick={() => {
+                      setSeeReviews(true);
+                    }}
+                  >See Reviews</Button>
               </div>
+              {
+                seeReviews && (
+                    <>
               <div className="p-6">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-medium">Ratings</h3>
@@ -169,6 +173,7 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                     <p className="text-base">{data.reviewCount} ratings</p>
                   </div>
                 </div>
+                
                 <div className="grid grid-cols-[auto_1fr_auto] gap-3 mt-4">
                   {[5, 4, 3, 2, 1].map((stars) => (
                     <Fragment key={stars}>
@@ -176,19 +181,19 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                       <Progress
                         value={data.ratingDistribution[stars]}
                         className="h-[1lh]"
-                      />
+                        />
                       <div className="font-medium">
                         {data.ratingDistribution[stars]}%
                       </div>
                     </Fragment>
                   ))}
                 </div>
-                {
-                  seeReviews && (
                     <ProductReviews productId={productId} />
+                
+              </div>
+                  </>
                   )
                 }
-              </div>
             </div>
           </div>
         </div>
