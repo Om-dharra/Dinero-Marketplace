@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Fragment, useState } from "react";
 import { toast } from "sonner";
 import { RichText } from "@payloadcms/richtext-lexical/react";
+import { ProductReviews } from "@/modules/discussions/views/components/discussion-view";
 
 // import { CartButton } from "../components/cart-button";
 const CartButton = dynamic(
@@ -37,6 +38,7 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
     id: productId,
   })
   )
+ 
   const [isCopied, setIsCopied] = useState(false);
   return (
     <div className="px-4 lg:px-12 py-10">
@@ -46,6 +48,7 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
             src={data.image?.url || "/auth-bg.jpg"}
             alt={data.name}
             fill
+            sizes="(max-width: 768px) 100vw, 33vw"
             className="object-cover"
           />
         </div>
@@ -110,6 +113,9 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                 </p>
               )}
             </div>
+            <br/>
+            
+            
           </div>
           <div className="col-span-2">
             <div className="border-t lg:border-t-0 lg:border-l h-full">
@@ -168,6 +174,7 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                     </Fragment>
                   ))}
                 </div>
+                <ProductReviews productId={productId} />
               </div>
             </div>
           </div>
@@ -186,6 +193,7 @@ export const ProductViewSkeleton = () => {
             src={"/auth-bg.jpg"}
             alt="Placeholder"
             fill
+            sizes="(max-width: 768px) 100vw, 33vw"
             className="object-cover"
           />
         </div>

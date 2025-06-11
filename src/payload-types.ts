@@ -312,8 +312,8 @@ export interface Review {
   rating: number;
   product: string | Product;
   user: string | User;
-  updatedAt: string;
   createdAt: string;
+  updatedAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -512,8 +512,8 @@ export interface ReviewsSelect<T extends boolean = true> {
   rating?: T;
   product?: T;
   user?: T;
-  updatedAt?: T;
   createdAt?: T;
+  updatedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

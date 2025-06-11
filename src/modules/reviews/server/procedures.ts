@@ -1,6 +1,6 @@
 
 
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -23,19 +23,20 @@ export const reviewsRouter = createTRPCRouter({
           message:"Product not found"
         });
       }
+      if (!ctx.session?.user?.id) return null;
       const reviewsData=await ctx.db.find({
         collection: 'reviews',
         limit:1,
         where:{
-          ans:[
+          and:[
             {
               product:{
-                equals:input.productId,
+                equals:product.id,
               }
             },
             {
               user:{
-                equals:ctx.session?.user?.id,
+                equals:ctx.session.user.id,
               }
 
             }
@@ -70,10 +71,16 @@ export const reviewsRouter = createTRPCRouter({
           message:"Product not found"
         });
       }
+      if (!ctx.session?.user?.id) {
+        throw new TRPCError({
+          code:"UNAUTHORIZED",
+          message:"You must be logged in to create a review"
+        });
+      }
       const existingReviewData=await ctx.db.find({
         collection: 'reviews',
         where:{
-          ans:[
+          and:[
             {
               product:{
                 equals:input.productId,
@@ -81,7 +88,7 @@ export const reviewsRouter = createTRPCRouter({
             },
             {
               user:{
-                equals:ctx.session?.user?.id,
+                equals:ctx.session.user.id,
               }
 
             }
@@ -94,21 +101,17 @@ export const reviewsRouter = createTRPCRouter({
           message:"You have already reviewed this product"
         });
       }
-      if (!ctx.session?.user?.id) {
-        throw new TRPCError({
-          code:"UNAUTHORIZED",
-          message:"You must be logged in to create a review"
-        });
-      }
+      
       const review=await ctx.db.create({
         collection: 'reviews',
         data:{
           user:ctx.session.user.id,
-          product:input.productId,
+          product:product.id,
           rating:input.rating,
           description:input.description,
         },
       });
+      
       return review;
     }),
     update:protectedProcedure
@@ -131,7 +134,13 @@ export const reviewsRouter = createTRPCRouter({
           message:"Review not found"
         });
       }
-      if (existingReview.user !== ctx.session?.user?.id) {
+      if (!ctx.session?.user?.id) {
+        throw new TRPCError({
+          code:"UNAUTHORIZED",
+          message:"You must be logged in to create a review"
+        });
+      }
+      if (existingReview.user !== ctx.session.user.id) {
         throw new TRPCError({
           code:"FORBIDDEN",
           message:"You are not allowed to update this review"
@@ -148,5 +157,18 @@ export const reviewsRouter = createTRPCRouter({
       });
       return updatedReview;
     }),
+    getAllForProduct: baseProcedure
+  .input(z.object({ productId: z.string() }))
+  .query(async ({ ctx, input }) => {
+    const reviewsData = await ctx.db.find({
+      collection: 'reviews',
+      pagination: false,
+      where: {
+        product: { equals: input.productId }
+      },
+      depth:1,
+    });
+    return reviewsData.docs;
+  }),
 });
 

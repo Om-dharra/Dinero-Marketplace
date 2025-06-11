@@ -41,6 +41,14 @@ export const Reviews: CollectionConfig = {
       hasMany: false,
       required: true,
     },
+    {
+      name: "createdAt",
+      type: "date",
+      defaultValue: new Date(),
+      admin: {
+        readOnly: true,
+      },
+    },
 
   ],
 }

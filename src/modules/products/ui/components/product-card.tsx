@@ -40,6 +40,7 @@ export const ProductCard = ({
         <Image
         alt={name}
         fill
+        sizes="(max-width: 768px) 100vw, 33vw"
         src={imageUrl || "/auth-bg.jpg"}
         className="object-cover"
         />

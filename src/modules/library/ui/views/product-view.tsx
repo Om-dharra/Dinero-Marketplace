@@ -28,7 +28,7 @@ export const ProductView = ({ productId }: Props) => {
       </nav>
       <header className="bg-[#F4F4F0] py-8 border-b">
         <div className="max-w-(--breakpoint-xl) mx-auto px-4 lg:px-12">
-          <h1 className="text-[40px] font-medium">{data.name}</h1>
+            <h1 className="text-[40px] font-medium">{data.name}</h1>
         </div>
       </header>
       <section className="max-w-(--breakpoint-xl) mx-auto px-4 lg:px-12 py-10">
@@ -51,7 +51,6 @@ export const ProductView = ({ productId }: Props) => {
             )}
 
           </div>
-
         </div>
       </section>
 

@@ -33,6 +33,7 @@ export const CheckoutItem = ({
             src={imageUrl || "/auth-bg.jpg"}
             alt={name}
             fill
+            sizes="(max-width: 768px) 100vw, 33vw"
             className="object-cover"
           />
         </div>

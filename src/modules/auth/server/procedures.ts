@@ -3,6 +3,7 @@ import { baseProcedure, createTRPCRouter} from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { loginSchema, registerSchema } from "../schemas";
 import { generateAuthCookie } from "../utils";
+import { stripe } from "@/lib/stripe";
 
 
 export const authRouter=createTRPCRouter({
@@ -33,15 +34,15 @@ export const authRouter=createTRPCRouter({
     }
     if (process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_')) {
   throw new Error('Live Stripe key detected! Use a test key for this environment.');
-}
-    
+}     
+    const account=await stripe.accounts.create({});
 
     const tenant=await ctx.db.create({
       collection: 'tenants',
       data: {
         name: input.username,
         slug: input.username,
-        stripeAccountId:"acct_1RYAcoPS8mLJFxXg",
+        stripeAccountId:account.id,
         stripeDetailsSubmitted:true,
       },
     })
