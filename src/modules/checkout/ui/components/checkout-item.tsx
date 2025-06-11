@@ -30,7 +30,7 @@ export const CheckoutItem = ({
       <div className="overflow-hidden border-r">
         <div className="relative aspect-square h-full">
           <Image
-            src={imageUrl || "/auth-bg.jpg"}
+            src={imageUrl || "/placeholder.png"}
             alt={name}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
