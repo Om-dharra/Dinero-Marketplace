@@ -40,6 +40,7 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
   )
  
   const [isCopied, setIsCopied] = useState(false);
+  const [seeReviews, setSeeReviews] = useState(false);
   return (
     <div className="px-4 lg:px-12 py-10">
       <div className="border rounded-sm bg-white overflow-hidden">
@@ -80,6 +81,14 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                   </p>
 
                 </Link>
+                <Button
+                    className="size-12"
+                    variant="elevated"
+                    onClick={() => {
+                      setSeeReviews(true);
+                    }}
+                    disabled={isCopied}
+                  >See Reviews</Button>
               </div>
               <div className="hidden lg:flex px-4 py-4 items-center justify-center">
                 <div className="flex items-center gap-1">
@@ -174,7 +183,11 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                     </Fragment>
                   ))}
                 </div>
-                <ProductReviews productId={productId} />
+                {
+                  seeReviews && (
+                    <ProductReviews productId={productId} />
+                  )
+                }
               </div>
             </div>
           </div>
