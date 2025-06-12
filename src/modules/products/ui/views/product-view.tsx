@@ -9,7 +9,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import {  CheckIcon, LinkIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment, useState } from "react";
+import { Fragment, Suspense, useState } from "react";
 import { toast } from "sonner";
 import { RichText } from "@payloadcms/richtext-lexical/react";
 import { ProductReviews } from "@/modules/discussions/views/components/discussion-view";
@@ -85,13 +85,20 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
               </div>
               <div className="hidden lg:flex px-4 py-4 items-center justify-center">
                 <div className="flex items-center gap-1">
-                  <StarRating
-                    rating={data.reviewRating}
-                    iconClassName="size-4"
-                  />
-                  <p className="text-base font-medium">
+                  {
+                    seeReviews && (
+                      <>
+                      <StarRating
+                      rating={data.reviewRating}
+                      iconClassName="size-4"
+                      />
+                      <p className="text-base font-medium">
                     {data.reviewCount} ratings
                   </p>
+                      </>
+                    )
+                  }
+                 
                 </div>
               </div>
             </div>
@@ -188,7 +195,9 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
                     </Fragment>
                   ))}
                 </div>
+                <Suspense fallback={<p>Loading...</p>}>
                     <ProductReviews productId={productId} />
+                </Suspense>
                 
               </div>
                   </>
