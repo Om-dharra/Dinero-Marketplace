@@ -1,11 +1,12 @@
 import {Sheet, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { CategoriesGetManyOutput } from "@/modules/categories/server/types";
+
 
 interface Props{
   open:boolean;
@@ -19,22 +20,36 @@ export const CategoriesSidebar = ({
   open,
   onOpenChange,
 }:Props) => {
-  const trpc = useTRPC();
-  const { data }=useQuery(trpc.categories.getMany.queryOptions());
-  
   const router = useRouter();
   const [parentCategories, setParentCategories] = useState<CategoriesGetManyOutput | null>(null);
   const [selectedCategpry, setselectedCategpry] = useState<CategoriesGetManyOutput[1] | null>(null);
+  
+  const trpc = useTRPC();
+  const { data }=useQuery(trpc.categories.getMany.queryOptions());
+  const currentCategories = useMemo(
+    () => parentCategories ?? data ?? [],
+    [parentCategories, data]
+  );
+
+   useEffect(() => {
+    if (!currentCategories) return;
+    currentCategories.forEach((category) => {
+      if (!category.subcategories || category.subcategories.length === 0) {
+        router.prefetch(`/${category.slug}`);
+      }
+    });
+  }, [currentCategories, router]);
+
+  if(!data){return <div>Loading...</div>;}
+  
   const handleOpenChange = (open: boolean) => {
     setselectedCategpry(null);
     setParentCategories(null);
     onOpenChange(open);
   };
-  // const categories = data;
-  const currentCategories =
-  parentCategories
-  ?? data   // ← grab the inner array
-  ?? [];
+  
+ 
+
   const handleCategoryClick = (category: CategoriesGetManyOutput[1]) => {
     if (category.subcategories && category.subcategories.length > 0) {
       setParentCategories(category.subcategories as CategoriesGetManyOutput);
@@ -44,12 +59,12 @@ export const CategoriesSidebar = ({
         router.push(`/${selectedCategpry.slug}/${category.slug}`);
       } else {
         if (category.slug === 'all') {
-          router.push('/'); // Redirect to home if 'all' category is selected
+          router.push('/');
         } else {
-          router.push(`/${category.slug}`); // Redirect to the selected category
+          router.push(`/${category.slug}`); 
         }
       }
-      handleOpenChange(false); // Close the sidebar
+      setTimeout(() => handleOpenChange(false), 0);
     }
   };
   const handleBackClick = () => {

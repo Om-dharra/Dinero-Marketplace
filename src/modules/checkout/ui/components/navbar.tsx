@@ -24,7 +24,7 @@ export const Navbar = ({ slug }:Props) => {
         variant="elevated"
         asChild
         >
-          <Link href={generateTenantURL(slug)}>
+          <Link prefetch href={generateTenantURL(slug)}>
           Continue Shopping
           </Link>
           </Button>

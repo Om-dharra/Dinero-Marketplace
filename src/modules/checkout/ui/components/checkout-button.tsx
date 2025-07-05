@@ -28,7 +28,7 @@ export const CheckoutButton = ({
       asChild
       className={cn("bg-white", className)}
     >
-      <Link href={`${generateTenantURL(tenantSlug)}/checkout`}>
+      <Link prefetch href={`${generateTenantURL(tenantSlug)}/checkout`}>
       <ShoppingCartIcon/>{totalItems>0 ? totalItems : ""}
       </Link>
 

@@ -11,9 +11,16 @@ interface Props{
   item : NavbarItem[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  session?: {
+    user: {
+      id: string;
+      email: string;
+      username: string;
+    };
+  } | undefined;
 }
 
-export const NavbarSidebar = ({ item, open, onOpenChange }: Props) => {
+export const NavbarSidebar = ({ item, open, onOpenChange, session }: Props) => {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="left" className="w-64">
@@ -33,17 +40,27 @@ export const NavbarSidebar = ({ item, open, onOpenChange }: Props) => {
               {navItem.children}
             </a>
           ))}
+          
           <div className="border-t">
-              <Link href="/sign-in"
+            {session?.user ? (
+              <Link prefetch href="/dashboard"
               className="w-full text-left p-4 hover:bg-black hover:text-white flex items-center text-base font-medium">
-                Log In
+                Dashboard
               </Link>
-              <Link href="/sign-up"
+            ) : (
+              <>
+                <Link prefetch href="/sign-in"
+                className="w-full text-left p-4 hover:bg-black hover:text-white flex items-center text-base font-medium">
+                    Log In
+                  </Link>
+                  <Link prefetch href="/sign-up"
               className="w-full text-left p-4 hover:bg-black hover:text-white flex items-center text-base font-medium">
 
                 Start Selling
               </Link>
-            </div>
+              </>
+            )}
+          </div>
         </ScrollArea>
       </SheetContent>
     </Sheet>

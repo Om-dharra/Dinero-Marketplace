@@ -66,7 +66,7 @@ export const ProductView = ({ productId, tenantSlug, }: ProductViewProps) => {
               </div>
 
               <div className="px-6 py-4 flex items-center justify-center lg:border-r">
-                <Link href={generateTenantURL(tenantSlug)} className="flex items-center gap-2">
+                <Link prefetch href={generateTenantURL(tenantSlug)} className="flex items-center gap-2">
                   {data.tenant.image?.url && (
                     <Image
                       src={data.tenant.image.url}
