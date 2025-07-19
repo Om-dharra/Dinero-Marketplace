@@ -43,7 +43,7 @@ export const NavbarSidebar = ({ item, open, onOpenChange, session }: Props) => {
           
           <div className="border-t">
             {session?.user ? (
-              <Link prefetch href="/dashboard"
+              <Link prefetch href="/admin"
               className="w-full text-left p-4 hover:bg-black hover:text-white flex items-center text-base font-medium">
                 Dashboard
               </Link>

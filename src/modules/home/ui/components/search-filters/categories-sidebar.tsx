@@ -1,4 +1,4 @@
-import {Sheet, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -8,8 +8,8 @@ import { useTRPC } from "@/trpc/client";
 import { CategoriesGetManyOutput } from "@/modules/categories/server/types";
 
 
-interface Props{
-  open:boolean;
+interface Props {
+  open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
@@ -19,19 +19,19 @@ interface Props{
 export const CategoriesSidebar = ({
   open,
   onOpenChange,
-}:Props) => {
+}: Props) => {
   const router = useRouter();
   const [parentCategories, setParentCategories] = useState<CategoriesGetManyOutput | null>(null);
   const [selectedCategpry, setselectedCategpry] = useState<CategoriesGetManyOutput[1] | null>(null);
-  
+
   const trpc = useTRPC();
-  const { data }=useQuery(trpc.categories.getMany.queryOptions());
+  const { data } = useQuery(trpc.categories.getMany.queryOptions());
   const currentCategories = useMemo(
     () => parentCategories ?? data ?? [],
     [parentCategories, data]
   );
 
-   useEffect(() => {
+  useEffect(() => {
     if (!currentCategories) return;
     currentCategories.forEach((category) => {
       if (!category.subcategories || category.subcategories.length === 0) {
@@ -40,54 +40,60 @@ export const CategoriesSidebar = ({
     });
   }, [currentCategories, router]);
 
-  if(!data){return <div>Loading...</div>;}
-  
+  if (!data) { return <div>Loading...</div>; }
+
   const handleOpenChange = (open: boolean) => {
     setselectedCategpry(null);
     setParentCategories(null);
     onOpenChange(open);
   };
-  
- 
 
-  const handleCategoryClick = (category: CategoriesGetManyOutput[1]) => {
+
+
+  const handleCategoryClick = async (category: CategoriesGetManyOutput[1]) => {
     if (category.subcategories && category.subcategories.length > 0) {
       setParentCategories(category.subcategories as CategoriesGetManyOutput);
       setselectedCategpry(category);
     } else {
-      if (parentCategories && selectedCategpry) {
-        router.push(`/${selectedCategpry.slug}/${category.slug}`);
-      } else {
-        if (category.slug === 'all') {
-          router.push('/');
+      try {
+
+        if (parentCategories && selectedCategpry) {
+          await router.push(`/${selectedCategpry.slug}/${category.slug}`);
         } else {
-          router.push(`/${category.slug}`); 
+          if (category.slug === 'all') {
+            await router.push('/');
+          } else {
+            router.push(`/${category.slug}`);
+          }
         }
+        handleOpenChange(false);
+      } catch (error) {
+        console.error("Error navigating to category:", error);
       }
-      setTimeout(() => handleOpenChange(false), 0);
+    
     }
   };
   const handleBackClick = () => {
-    if(parentCategories){
+    if (parentCategories) {
       setParentCategories(null);
       setselectedCategpry(null);
     }
   };
 
-  const backgroundColor=selectedCategpry?.color || 'white';
+  const backgroundColor = selectedCategpry?.color || 'white';
 
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent
-      side="left"
-      className="p-0 transition-none"
-      style={{ backgroundColor}}
+        side="left"
+        className="p-0 transition-none"
+        style={{ backgroundColor }}
       >
         <SheetHeader className="p-4 border-b">
           <SheetTitle>
-          Categories
-        </SheetTitle>
+            Categories
+          </SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex flex-col overflow-y-auto h-full pb-2">
           {parentCategories && (
@@ -115,8 +121,8 @@ export const CategoriesSidebar = ({
           ))}
 
         </ScrollArea>
-        
+
       </SheetContent>
-      </Sheet>
+    </Sheet>
   )
 }

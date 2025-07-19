@@ -8,6 +8,7 @@ import { sortValues } from "../search-params";
 import { DEFAULT_LIMIT } from "@/constants";
 
 export const productsRouter = createTRPCRouter({
+  
   getOne: baseProcedure
     .input(
       z.object({
